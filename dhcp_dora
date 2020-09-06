@@ -1,0 +1,16 @@
+from scapy.all import *
+
+macadres = b'\xff\x1d\x28\x2b\xe1\x91'
+etherpaketi = Ether(dst="ff:ff:ff:ff:ff:ff",src="00:00:00:00:00:00",type=0x800)
+ippaket = IP(src="0.0.0.0",dst="255.255.255.255")
+udppaket = UDP(sport=68,dport=67)
+bootpaket = BOOTP(chaddr = macadres,ciaddr="0.0.0.0",xid = 6,flags=1)
+offerip="10.0.2.28"
+
+dhcpd = DHCP(options=[("message-type","discover"),"end"])
+paketd = etherpaketi / ippaket / udppaket / bootpaket / dhcpd
+sendp(paketd,verbose=False)
+
+dhcpr = DHCP(options=[("message-type","request"),("requested_addr","10.0.2.20"),("hostname","kali2"),("param_req_list",1,28,2,3,15,6,119,12,44,47,26,121,42),"end"])
+paketr = etherpaketi / ippaket / udppaket / bootpaket / dhcpr
+sendp(paketr,verbose=False)
